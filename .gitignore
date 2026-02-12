@@ -1,0 +1,22 @@
+# Compiler output
+cache/
+out/
+
+# Environment
+.env
+
+# Dependencies
+node_modules/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# claude-team (downloaded skills — not committed)
+.claude/agents/*/skills/
+.claude/agents/skills.json
+.claude-team.lock
