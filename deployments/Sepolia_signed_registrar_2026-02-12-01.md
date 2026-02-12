@@ -1,4 +1,43 @@
-# Primary Agent Registry - Sepolia Deployment
+# SignedRegistrar - Sepolia Deployment
+
+**Date:** 2026-02-12
+**Network:** Sepolia (Chain ID: 11155111)
+**Compiler:** solc 0.8.28
+**Deployer:** `0xF8e03bd4436371E0e2F7C02E529b2172fe72b4EF`
+
+## Summary
+
+Deployed the new SignedRegistrar contract and granted it `REGISTRAR_ROLE` on the existing PrimaryAgentRegistry proxy. The SignedRegistrar allows EOAs to sign registration messages off-chain (EIP-191 `personal_sign`), and anyone can submit the signature on-chain to register on their behalf. Supports optional signature deadlines and per-account nonce replay protection.
+
+## Deployed Contract
+
+| Contract | Address |
+|----------|---------|
+| SignedRegistrar | `0x8C6E4dDeCc8ec13E6cbE34634f61656f7CB91999` |
+
+## Transaction Hashes
+
+| Transaction | Hash |
+|-------------|------|
+| Deploy SignedRegistrar | `0x57633606caa62e3460f997ba6b8e8c785765960a5d1fe54299bc034629a72847` |
+| Grant REGISTRAR_ROLE | `0xb84877d30257fa4b3cf575f19fc65d730ef646ad9154722dd344240a1052b674` |
+
+## Details
+
+- Registry Proxy: `0xFb684dB5A38454Fe39cB314E495C1f5e3a3620c1`
+- Deploy script: `scripts/DeploySignedRegistrar.s.sol`
+- Broadcast: `broadcast/DeploySignedRegistrar.s.sol/11155111/run-latest.json`
+- Gas used: 752,262 (deploy) + 57,224 (grantRole) = 809,486 total
+- Block: 10,275,115 (`0x9c4d2b`)
+- Verified on-chain: `hasRole(REGISTRAR_ROLE, 0x8C6E...1999) == true`
+
+## Test Results
+
+46 tests passing (5 test suites). 9 new SignedRegistrar tests added.
+
+---
+
+# Previous Deployment: Primary Agent Registry - Sepolia
 
 **Date:** 2026-02-11
 **Network:** Sepolia (Chain ID: 11155111)
@@ -15,7 +54,6 @@
 | ERC1271Registrar | `0xE831BA71aF7440a628f0b54476ad914d51731d8f` | CREATE |
 | OwnableRegistrar | `0xd180541E7aa7A0DD1ffF84C9Bd86Df7CEa8b7B4F` | CREATE |
 | AccessControlRegistrar | `0x39cFac3b757134247018DF61F6aA52d11764CC5C` | CREATE |
-| SignedRegistrar | `0x8C6E4dDeCc8ec13E6cbE34634f61656f7CB91999` | CREATE (added 2026-02-12) |
 
 ## Transaction Hashes
 
@@ -31,27 +69,13 @@
 | Grant REGISTRAR_ROLE (ERC1271) | `0x925c147d28e18278857b15680e6235c1524dd84d241fc0dd7ae54184522c9c2a` |
 | Grant REGISTRAR_ROLE (Ownable) | `0x2783be349d7066d59328d01acf6cd8b081ebc91d4d2c7d0729df91ae1461417e` |
 | Grant REGISTRAR_ROLE (AccessControl) | `0xe11bad3e895a4ad0e9076917e70187b66f511965f0f62814dea5d5cbe08cc23d` |
-| Deploy SignedRegistrar | `0x57633606caa62e3460f997ba6b8e8c785765960a5d1fe54299bc034629a72847` |
-| Grant REGISTRAR_ROLE (Signed) | `0xb84877d30257fa4b3cf575f19fc65d730ef646ad9154722dd344240a1052b674` |
 
 ## Configuration
 
 - Admin (DEFAULT_ADMIN_ROLE): `0xF8e03bd4436371E0e2F7C02E529b2172fe72b4EF`
-- All five registrars granted REGISTRAR_ROLE
+- All four registrars granted REGISTRAR_ROLE
 - Deployment mode: UUPS Proxy (upgradeable)
-
-## Updates
-
-### 2026-02-12: SignedRegistrar added
-
-- Deployed SignedRegistrar at `0x8C6E4dDeCc8ec13E6cbE34634f61656f7CB91999`
-- Granted REGISTRAR_ROLE via `grantRole()` on proxy
-- Verified on-chain: `hasRole(REGISTRAR_ROLE, signedRegistrar) == true`
-- Deploy script: `scripts/DeploySignedRegistrar.s.sol`
-- Broadcast: `broadcast/DeploySignedRegistrar.s.sol/11155111/run-latest.json`
-- Gas used: 752,262 (deploy) + 57,224 (grantRole) = 809,486 total
-- Block: 10,275,115 (`0x9c4d2b`)
 
 ## Test Results
 
-46 tests passing (5 test suites). Original 37 + 9 new SignedRegistrar tests.
+37 tests passing (4 test suites).

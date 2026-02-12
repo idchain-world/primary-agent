@@ -8,6 +8,7 @@ import "../src/registrars/SelfRegistrar.sol";
 import "../src/registrars/ERC1271Registrar.sol";
 import "../src/registrars/OwnableRegistrar.sol";
 import "../src/registrars/AccessControlRegistrar.sol";
+import "../src/registrars/SignedRegistrar.sol";
 
 contract Deploy is Script {
     function run() external {
@@ -44,12 +45,16 @@ contract Deploy is Script {
         AccessControlRegistrar acRegistrar = new AccessControlRegistrar(address(registry));
         console.log("AccessControlRegistrar:", address(acRegistrar));
 
+        SignedRegistrar signedRegistrar = new SignedRegistrar(address(registry));
+        console.log("SignedRegistrar:", address(signedRegistrar));
+
         // 4. Grant REGISTRAR_ROLE to each registrar
         bytes32 registrarRole = registry.REGISTRAR_ROLE();
         registry.grantRole(registrarRole, address(selfRegistrar));
         registry.grantRole(registrarRole, address(erc1271Registrar));
         registry.grantRole(registrarRole, address(ownableRegistrar));
         registry.grantRole(registrarRole, address(acRegistrar));
+        registry.grantRole(registrarRole, address(signedRegistrar));
 
         console.log("REGISTRAR_ROLE granted to all registrars");
 

@@ -32,12 +32,12 @@ For token IDs up to 10 bytes (2^80), the entire value fits in **a single storage
 │  + agentData()       (public view)       │
 └──────────────────┬───────────────────────┘
                    │ REGISTRAR_ROLE
-     ┌─────────────┼─────────────┬─────────────┐
-     │             │             │             │
-┌────┴────┐ ┌─────┴─────┐ ┌────┴────┐ ┌──────┴──────┐
-│  Self   │ │  ERC-1271 │ │ Ownable │ │ Role-check  │
-│Registrar│ │ Registrar │ │Registrar│ │  Registrar  │
-└─────────┘ └───────────┘ └─────────┘ └─────────────┘
+     ┌─────────────┼─────────────┬─────────────┬─────────────┐
+     │             │             │             │             │
+┌────┴────┐ ┌─────┴─────┐ ┌────┴────┐ ┌──────┴──────┐ ┌────┴────┐
+│  Self   │ │  ERC-1271 │ │ Ownable │ │ Role-check  │ │ Signed  │
+│Registrar│ │ Registrar │ │Registrar│ │  Registrar  │ │Registrar│
+└─────────┘ └───────────┘ └─────────┘ └─────────────┘ └─────────┘
 ```
 
 ## Registrars
@@ -48,6 +48,7 @@ For token IDs up to 10 bytes (2^80), the entire value fits in **a single storage
 | **ERC1271Registrar** | Smart contract wallets | ERC-1271 `isValidSignature()` |
 | **OwnableRegistrar** | Contracts with `owner()` | Calls `owner()` or `getOwner()` |
 | **AccessControlRegistrar** | Contracts with role-based access | Calls `hasRole(adminRole, caller)` |
+| **SignedRegistrar** | EOAs via off-chain signature | ECDSA `ecrecover` (EIP-191 `personal_sign`) |
 
 ## Getting Started
 
@@ -79,6 +80,21 @@ selfRegistrar.register(agentRegistryAddress, tokenId);
 
 // Clear registration
 selfRegistrar.register(address(0), 0);
+```
+
+### Register an EOA via Signature (Signed Registrar)
+
+```solidity
+SignedRegistrar signedRegistrar = SignedRegistrar(SIGNED_REGISTRAR_ADDRESS);
+
+// Off-chain: EOA signs the registration message (deadline 0 = no expiry)
+uint256 deadline = block.timestamp + 1 hours; // or 0 for no expiry
+bytes32 hash = keccak256(abi.encodePacked(account, registry, tokenId, deadline, chainId, signedRegistrarAddress, nonce));
+bytes32 ethHash = MessageHashUtils.toEthSignedMessageHash(hash);
+(uint8 v, bytes32 r, bytes32 s) = vm.sign(privateKey, ethHash); // or wallet.signMessage()
+
+// On-chain: anyone can submit the signature
+signedRegistrar.register(account, agentRegistryAddress, tokenId, deadline, abi.encodePacked(r, s, v));
 ```
 
 ### Register a Smart Contract (ERC-1271)
@@ -138,11 +154,29 @@ primaryAgentRegistry.revokeRole(REGISTRAR_ROLE, oldRegistrarAddress);
 
 ## Contract Addresses
 
-Designed for singleton deployment via CREATE2 to the same address on every EVM chain.
+### Sepolia (Chain ID: 11155111)
 
-| Chain | Address |
-|-------|---------|
-| TBD | TBD |
+| Contract | Address |
+|----------|---------|
+| PrimaryAgentRegistry (Proxy) | `0xFb684dB5A38454Fe39cB314E495C1f5e3a3620c1` |
+| PrimaryAgentRegistry (Implementation) | `0xe924d03daaf1AEcc39fDE1902551ce713812823b` |
+| SelfRegistrar | `0xEbB9561Caa68009faf3D912334F7a3525a28F3B0` |
+| ERC1271Registrar | `0xE831BA71aF7440a628f0b54476ad914d51731d8f` |
+| OwnableRegistrar | `0xd180541E7aa7A0DD1ffF84C9Bd86Df7CEa8b7B4F` |
+| AccessControlRegistrar | `0x39cFac3b757134247018DF61F6aA52d11764CC5C` |
+| SignedRegistrar | `0x8C6E4dDeCc8ec13E6cbE34634f61656f7CB91999` |
+
+### Base (Chain ID: 8453)
+
+| Contract | Address |
+|----------|---------|
+| PrimaryAgentRegistry (Proxy) | `0xeC8554c3Ff5B986a6F631c402d281E27a7a42b5C` |
+| PrimaryAgentRegistry (Implementation) | `0x090323AE9BD72E85BFbEA346bD9c9f24BbEE9AF8` |
+| SelfRegistrar | `0x6F48C14C0C8426560B2b64240D17dB5f4F96FB27` |
+| ERC1271Registrar | `0xABB1993b9eA0E15C10cC112C334CA21F4643dc55` |
+| OwnableRegistrar | `0x96Def5706e2Cd957e347945C680d1d0f7bCc9184` |
+| AccessControlRegistrar | `0x6F0f16F965A8885eA8E128A96b7d977375aa4468` |
+| SignedRegistrar | `0x474E2193c25F74C824819ffCb60572fC0Ea00358` |
 
 ## License
 
