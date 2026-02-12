@@ -34,10 +34,10 @@ For token IDs up to 10 bytes (2^80), the entire value fits in **a single storage
                    │ REGISTRAR_ROLE
      ┌─────────────┼─────────────┬─────────────┬─────────────┐
      │             │             │             │             │
-┌────┴────┐ ┌─────┴─────┐ ┌────┴────┐ ┌──────┴──────┐ ┌────┴────┐
-│  Self   │ │  ERC-1271 │ │ Ownable │ │ Role-check  │ │ Signed  │
-│Registrar│ │ Registrar │ │Registrar│ │  Registrar  │ │Registrar│
-└─────────┘ └───────────┘ └─────────┘ └─────────────┘ └─────────┘
+┌────┴────┐  ┌─────┴─────┐  ┌────┴────┐ ┌──────┴──────┐ ┌────┴────┐
+│  Self   │  │  ERC-1271 │  │ Ownable │ │ Role-check  │ │ Signed  │
+│Registrar│  │ Registrar │  │Registrar│ │  Registrar  │ │Registrar│
+└─────────┘  └───────────┘  └─────────┘ └─────────────┘ └─────────┘
 ```
 
 ## Registrars
