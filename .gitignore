@@ -2,6 +2,9 @@
 cache/
 out/
 
+# Forge broadcast (contains private key derived data)
+broadcast/
+
 # Environment
 .env
 
